@@ -12,20 +12,20 @@
 			var alto_inicial=10;
 			var ancho_incial_matriz="280px";
 			
-			//Colocar ancho inicial de la Matríz
-			$("#matriz").css("width",ancho_incial_matriz);
-			for(fila=1;fila<=alto_inicial;fila++)
-				{
-					for(columna=1;columna<=ancho_inicial;columna++)
+				//Colocar ancho inicial de la Matríz
+				$("#matriz").css("width",ancho_incial_matriz);
+				for(fila=1;fila<=alto_inicial;fila++)
 					{
-						$("#matriz").html($("#matriz").html()+"<div class='celda' id='"+fila+"-"+columna+"' style='cursor:pointer;float:left;width:20px;height:20px;border:solid 1px #000;margin:3px'></div>");
-						
-						if(ancho_inicial == columna)
+						for(columna=1;columna<=ancho_inicial;columna++)
 						{
-							$("#matriz").html($("#matriz").html()+"<br style='clear:both'>");
-						}						
+							$("#matriz").html($("#matriz").html()+"<div class='celda' id='"+fila+"-"+columna+"' style='cursor:pointer;float:left;width:20px;height:20px;border:solid 1px #000;margin:3px'></div>");
+							
+							if(ancho_inicial == columna)
+							{
+								$("#matriz").html($("#matriz").html()+"<br style='clear:both'>");
+							}						
+						}
 					}
-				}
 				
 			//Generar nueva matríz
 			$(document).on("click",'#generar_matriz', function()
