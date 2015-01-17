@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+	<script type="text/javascript" src="jquery-2.1.3.min.js"></script>
+<meta charset="utf-8">
+<title>Conway´s Game</title>
+  <script> 
+		$(document).ready(function()
+		{
+			//Generar Matríz Inicial
+			var ancho_inicial=10;
+			var alto_inicial=10;
+			var ancho_incial_matriz="280px";
+			
+			//Colocar ancho inicial de la Matríz
+			$("#matriz").css("width",ancho_incial_matriz);
+			for(fila=1;fila<=alto_inicial;fila++)
+				{
+					for(columna=1;columna<=ancho_inicial;columna++)
+					{
+						$("#matriz").html($("#matriz").html()+"<div class='celda' id='"+fila+"-"+columna+"' style='cursor:pointer;float:left;width:20px;height:20px;border:solid 1px #000;margin:3px'></div>");
+						
+						if(ancho_inicial == columna)
+						{
+							$("#matriz").html($("#matriz").html()+"<br style='clear:both'>");
+						}						
+					}
+				}
+				
+			//Generar nueva matríz
+			$(document).on("click",'#generar_matriz', function()
+			{
+				//Limpiar Matríz
+				$("#matriz").html('');
+				var ancho=$("#ancho").val();
+				var alto=$("#alto").val();
+				var ancho_div_matriz="";
+				//Calculo del ancho de la matriz = ancho * 30
+				var ancho_div_matriz=ancho*28+"px";
+				$("#matriz").css("width",ancho_div_matriz);
+				//Calculamos si excede el ancho y alto máximo
+				if(ancho>40 || alto>40)
+				{
+					alert("Excede el tamaño máximo permitido de la matríz");
+				}
+				else
+				{
+					for(fila=1;fila<=alto;fila++)
+					{
+						for(columna=1;columna<=ancho;columna++)
+						{
+							$("#matriz").html($("#matriz").html()+"<div class='celda' id='"+fila+"-"+columna+"' style='cursor:pointer;float:left;width:20px;height:20px;border:solid 1px #000;margin:3px'></div>");
+							
+							if(ancho == columna)
+							{
+								$("#matriz").html($("#matriz").html()+"<br style='clear:both'>");
+							}						
+						}
+					}
+				}
+				
+			});
+			
+			
+			$(document).on("click",'#reproducir', function()
+			{
+				
+			});
+			
+			//Colorear Celdas
+			$(document).on("click",'.celda', function()
+			{
+				if($(this).css('background-color')=="transparent")
+				{
+					$(this).css("background-color", "#000");
+				}
+				else
+				{
+					$(this).css("background-color", "");
+				}
+			});
+			
+		});
+	</script>
+</head>
+
+<body>
+	<div style="text-align:center;margin:0 auto"><strong>Please, select the matrix dimensions</strong></div>
+    <div style="text-align:center;margin:0 auto 30px 0">
+    	Width: <input autocomplete="off" size="2" type="text" name="ancho" id="ancho">
+    	Height: <input autocomplete="off" size="2" type="text" name="alto" id="alto"><br>
+        Note: Max size: 40 X 40<br>
+        <input type="button" name="generar_matriz" id="generar_matriz" value="Resize Matrix">
+    </div>
+    <div style="margin:0 auto;text-align:center" id="matriz">
+    	
+    </div>
+     <div style="text-align:center;margin:20px auto 0 0">
+     	<!--<input type="button" name="reproducir" id="reproducir" value="Reproducir"><br>-->
+		<input type="button" name="pausar" id="pausar" value="Pause">
+        <input type="button" name="siguiente" id="siguiente" value="Next Cicle">
+        <input type="button" name="reiniciar" id="reiniciar" value="Restart Matrix">
+	</div>
+</body>
+</html>
