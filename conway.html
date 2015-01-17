@@ -11,6 +11,11 @@
 			var ancho_inicial=10;
 			var alto_inicial=10;
 			var ancho_incial_matriz="280px";
+			var celulas_iniciales=5;
+			
+			//Rellear Campos (inputs) de Alto y Ancho 
+			$("#ancho").val(ancho_inicial);
+			$("#alto").val(alto_inicial);
 			
 				//Colocar ancho inicial de la Matríz
 				$("#matriz").css("width",ancho_incial_matriz);
@@ -26,6 +31,34 @@
 							}						
 						}
 					}
+			//Rellenar con Celulas Vivas en la Matríz (Aleatoriamente)
+			for(A=1;A<=celulas_iniciales;A++)
+			{
+				//Generamos Numero aleatorio de la fila
+				var fila_aleatoria=obtenerNumAleatorio(1,alto_inicial);
+				var columna_aleatoria=obtenerNumAleatorio(1,ancho_inicial);
+				//Colorear Celda Aleatoria
+				var celda_aleatoria=fila_aleatoria+"-"+columna_aleatoria
+				
+				if($("#"+celda_aleatoria).css('background-color')=="transparent")
+				{
+					$("#"+celda_aleatoria).css("background-color", "#000");
+				}
+				//$("#"+celda_aleatoria).
+				//alert(fila_aleatoria+"-"+columna_aleatoria);
+				
+			}
+			
+			
+			
+			//alert(obtenerNumAleatorio(1,7));
+				
+				
+			//Genera N° Aleatorio
+			function obtenerNumAleatorio(min, max) 
+			{
+    			return Math.floor(Math.random() * (max - min + 1)) + min;
+			}	
 				
 			//Generar nueva matríz
 			$(document).on("click",'#generar_matriz', function()
