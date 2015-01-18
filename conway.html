@@ -31,27 +31,34 @@
 							}						
 						}
 					}
-			//Rellenar con Celulas Vivas en la Matríz (Aleatoriamente)
-			for(A=1;A<=celulas_iniciales;A++)
+			//Rellenamos las celdas al cargar la página
+			colorear_celdas_aleatoriamente(alto_inicial,ancho_inicial);	
+			calcularAdyacentes("1-10");
+			
+			//Función para rellenar con Celulas Vivas en la Matríz (Aleatoriamente)	
+			function colorear_celdas_aleatoriamente(alto,ancho)
 			{
-				//Generamos Numero aleatorio de la fila
-				var fila_aleatoria=obtenerNumAleatorio(1,alto_inicial);
-				var columna_aleatoria=obtenerNumAleatorio(1,ancho_inicial);
-				//Colorear Celda Aleatoria
-				var celda_aleatoria=fila_aleatoria+"-"+columna_aleatoria
 				
-				if($("#"+celda_aleatoria).css('background-color')=="transparent")
+				for(A=1;A<=celulas_iniciales;A++)
 				{
-					$("#"+celda_aleatoria).css("background-color", "#000");
+					//Generamos Numero aleatorio de la fila
+					var fila_aleatoria=obtenerNumAleatorio(1,alto);
+					var columna_aleatoria=obtenerNumAleatorio(1,ancho);
+					//Colorear Celda Aleatoria
+					var celda_aleatoria=fila_aleatoria+"-"+columna_aleatoria
+					
+					if($("#"+celda_aleatoria).css('background-color')=="transparent")
+					{
+						$("#"+celda_aleatoria).css("background-color", "#000");
+					}
+					
+					//Depurar
+					//$("#1-10").css("background-color", "#000");
+					//$("#2-1").css("background-color", "#000")
+					//$("#"+celda_aleatoria).
+					//alert(fila_aleatoria+"-"+columna_aleatoria);
 				}
-				//$("#"+celda_aleatoria).
-				//alert(fila_aleatoria+"-"+columna_aleatoria);
-				
 			}
-			
-			
-			
-			//alert(obtenerNumAleatorio(1,7));
 				
 				
 			//Genera N° Aleatorio
@@ -61,7 +68,7 @@
 			}	
 				
 			//Generar nueva matríz
-			$(document).on("click",'#generar_matriz', function()
+			$(document).on("click",'#generar_matriz, #reiniciar ', function()
 			{
 				//Limpiar Matríz
 				$("#matriz").html('');
@@ -92,6 +99,9 @@
 					}
 				}
 				
+			//Rellenamos las celdas al crear Matríz
+			colorear_celdas_aleatoriamente(alto,ancho);	
+				
 			});
 			
 			
@@ -99,6 +109,39 @@
 			{
 				
 			});
+			
+			function calcularAdyacentes(celda)
+			{
+				var FilaColumnaCelula=celda.split("-");
+				var fila_celda=FilaColumnaCelula[0];
+				var columna_celda=FilaColumnaCelula[1];
+				
+				//Calculamos si hay célula viva adyacente (Diagonal Izquierda)
+				//restamos 1 a la fila y restamos una a la columna
+				var fila_diagonal_izquierda=fila_celda-1;
+				var columna_diagonal_izquierda=columna_celda-1;
+				
+				var nombre_celda_diagonal_izquierda=fila_diagonal_izquierda+"-"+columna_diagonal_izquierda;
+				//alert(nombre_celda_diagonal_izquierda);
+				//Preguntamos si es mayor a 0 y sabemos si son la primera o la última celda de la primera o última fila
+				if(fila_diagonal_izquierda>0 && fila_diagonal_izquierda>0)
+				{
+					alert($("#"+nombre_celda_diagonal_izquierda).css('background-color'));
+					
+					if($("#"+nombre_celda_diagonal_izquierda).css('background-color')=="rgb(0, 0, 0)")
+					{
+						//alert("Viva");
+					}
+					else
+					{
+						//alert("Muerta");
+					}
+				}
+				
+								
+
+			}
+			
 			
 			//Colorear Celdas
 			$(document).on("click",'.celda', function()
