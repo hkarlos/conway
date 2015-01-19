@@ -11,7 +11,9 @@
 			var ancho_inicial=10;
 			var alto_inicial=10;
 			var ancho_incial_matriz="280px";
-			var celulas_iniciales=5;
+			var total_celdas_iniciales=ancho_inicial*alto_inicial;
+			var celulas_iniciales=obtenerNumAleatorio(1,total_celdas_iniciales);
+			//alert(celulas_iniciales);
 			
 			//Rellear Campos (inputs) de Alto y Ancho 
 			$("#ancho").val(ancho_inicial);
@@ -32,11 +34,12 @@
 						}
 					}
 			//Rellenamos las celdas al cargar la página
-			colorear_celdas_aleatoriamente(alto_inicial,ancho_inicial);	
-			calcularAdyacentes("1-10");
+			colorear_celdas_aleatoriamente(alto_inicial,ancho_inicial,celulas_iniciales);	
+			var reproduccion = self.setInterval(function(){reproducir()},1000);
+			//calcularAdyacentes("1-1");
 			
 			//Función para rellenar con Celulas Vivas en la Matríz (Aleatoriamente)	
-			function colorear_celdas_aleatoriamente(alto,ancho)
+			function colorear_celdas_aleatoriamente(alto,ancho,celulas_iniciales)
 			{
 				
 				for(A=1;A<=celulas_iniciales;A++)
@@ -51,12 +54,6 @@
 					{
 						$("#"+celda_aleatoria).css("background-color", "#000");
 					}
-					
-					//Depurar
-					//$("#1-10").css("background-color", "#000");
-					//$("#2-1").css("background-color", "#000")
-					//$("#"+celda_aleatoria).
-					//alert(fila_aleatoria+"-"+columna_aleatoria);
 				}
 			}
 				
@@ -70,11 +67,18 @@
 			//Generar nueva matríz
 			$(document).on("click",'#generar_matriz, #reiniciar ', function()
 			{
+				//Colocamos habilitado de nuevo el botón de Pausar 
+				$("#pausar").attr("disabled",false);
+				//Reiniciamos el contador de Células Vivas
+				$("#celulas_vivas").html("");
 				//Limpiar Matríz
 				$("#matriz").html('');
 				var ancho=$("#ancho").val();
 				var alto=$("#alto").val();
 				var ancho_div_matriz="";
+				var total_celdas_iniciales=ancho_inicial*alto_inicial;
+				var celulas_iniciales=obtenerNumAleatorio(1,total_celdas_iniciales);
+				//alert(celulas_iniciales);
 				//Calculo del ancho de la matriz = ancho * 30
 				var ancho_div_matriz=ancho*28+"px";
 				$("#matriz").css("width",ancho_div_matriz);
@@ -99,47 +103,138 @@
 					}
 				}
 				
-			//Rellenamos las celdas al crear Matríz
-			colorear_celdas_aleatoriamente(alto,ancho);	
-				
+				//Rellenamos las celdas al crear Matríz
+				colorear_celdas_aleatoriamente(alto,ancho,celulas_iniciales);	
+				window.clearInterval(reproduccion);	
+				reproduccion = self.setInterval(function(){reproducir()},1000);	
+				$("#pausar").attr("value","Pause");
+				$("#siguiente").attr("disabled",true);
 			});
 			
-			
-			$(document).on("click",'#reproducir', function()
+			function reproducir()
 			{
+				var A=1;
+				var muertas=0;
+				var finalReproduccion=10;
+				var celulasVivas=0;
+				var ancho=$("#ancho").val();
+				var alto=$("#alto").val();
+
+					$(".celda" ).each(function() 
+					{
+						var totalAdyacentesVivos=0;
+						var idCelda=$(this).attr('id');
+						//alert(idCelda);
+						totalAdyacentesVivos=calcularAdyacentes(idCelda);
+						
+						//Si es una célula viva y tiene menos de 2 o más de 3 adyacentes vivos muere 
+						if($(this).css('background-color')=="rgb(0, 0, 0)" && (totalAdyacentesVivos<2 || totalAdyacentesVivos>3))
+						{
+							$(this).css("background-color", "");
+						}
+						//Si es una célula viva y tiene 2 o 3 adyacentes vivos vive 
+						else if($(this).css('background-color')=="rgb(0, 0, 0)" && (totalAdyacentesVivos==2 || totalAdyacentesVivos==3))
+						{
+							$(this).css("background-color", "#000");
+						}
+						else if($(this).css('background-color')=="transparent" && totalAdyacentesVivos==3)
+						{
+							$(this).css("background-color", "#000");
+						}
+						else
+						{
+							muertas++;	
+						}
+
+						
+					});
+				//Calculamos cuantos hay vivas actualmente
+				$(".celda" ).each(function() 
+					{
+						if($(this).css('background-color')=="rgb(0, 0, 0)")
+						{
+							celulasVivas++;
+						}
+					});
+				$("#celulas_vivas").html(celulasVivas);
+				//Si el total de Celulas vivas + el total de celulas muertas es igual al tamaño total de la matríz (es estable)
+				if(muertas+celulasVivas==alto*ancho)
+				{
+					$("#valor_estabilizado").html(" Yes");
+					window.clearInterval(reproduccion);	
+					$("#pausar").attr("disabled",true);
+					$("#siguiente").attr("disabled",true);
+				}
+				else
+				{
+					$("#valor_estabilizado").html(" No");					
+				}
 				
+				
+			}
+			
+			$(document).on("click",'#pausar', function()
+			{
+				//si pausamos cambiamos el value del boton a Reproducir
+				if($(this).attr("value")=="Pause")
+				{
+					window.clearInterval(reproduccion);	
+					$(this).attr("value","Continue");
+					$("#siguiente").attr("disabled",false);
+					
+				}
+				else
+				{
+					//continuar();
+					reproduccion = self.setInterval(function(){reproducir()},1000);	
+					$(this).attr("value","Pause");
+					$("#siguiente").attr("disabled",true);
+				}
+						
+			});
+			
+			$(document).on("click",'#siguiente', function()
+			{
+				reproducir();		
 			});
 			
 			function calcularAdyacentes(celda)
 			{
+				//alert(celda);
+				//return false;
 				var FilaColumnaCelula=celda.split("-");
-				var fila_celda=FilaColumnaCelula[0];
-				var columna_celda=FilaColumnaCelula[1];
-				
-				//Calculamos si hay célula viva adyacente (Diagonal Izquierda)
-				//restamos 1 a la fila y restamos una a la columna
-				var fila_diagonal_izquierda=fila_celda-1;
-				var columna_diagonal_izquierda=columna_celda-1;
-				
-				var nombre_celda_diagonal_izquierda=fila_diagonal_izquierda+"-"+columna_diagonal_izquierda;
-				//alert(nombre_celda_diagonal_izquierda);
-				//Preguntamos si es mayor a 0 y sabemos si son la primera o la última celda de la primera o última fila
-				if(fila_diagonal_izquierda>0 && fila_diagonal_izquierda>0)
+				var fila_celda=parseInt(FilaColumnaCelula[0]);
+				var columna_celda=parseInt(FilaColumnaCelula[1]);
+				var contadorCelulasAdyacentesVivas=0;
+				var altoMatríz=$("#alto").val();
+				var anchoMatríz=$("#ancho").val();
+				//alert(columna_celda+1);
+				for(F=fila_celda-1;F<=fila_celda+1;F++)
 				{
-					alert($("#"+nombre_celda_diagonal_izquierda).css('background-color'));
-					
-					if($("#"+nombre_celda_diagonal_izquierda).css('background-color')=="rgb(0, 0, 0)")
-					{
-						//alert("Viva");
-					}
-					else
-					{
-						//alert("Muerta");
-					}
-				}
-				
-								
 
+					for(C=columna_celda-1;C<=columna_celda+1;C++)
+					{
+						//La Fila y la Columna no pueden ser 0 (Quiere decir que es la primera fila, la última o la primera celda) 
+						//Omitimos la propia celda
+						//se valida que la celda no sea mayor a alto y ancho total
+						if(C>0 && F>0 && celda!=F+"-"+C && F<=altoMatríz && C<=anchoMatríz)
+						{
+							//alert(F+"-"+C);
+							if($("#"+F+"-"+C).css('background-color')=="rgb(0, 0, 0)")
+							{
+								contadorCelulasAdyacentesVivas++;
+								//alert(F+"-"+C+"VIVA");
+								//alert("VIVA");
+								
+							}
+							/*else
+							{
+								alert("MUERTA");
+							}*/
+						}
+					}	
+				}
+				return contadorCelulasAdyacentesVivas;
 			}
 			
 			
@@ -174,10 +269,12 @@
     	
     </div>
      <div style="text-align:center;margin:20px auto 0 0">
-     	<!--<input type="button" name="reproducir" id="reproducir" value="Reproducir"><br>-->
+     	<!--<input type="button" name="reproducir" id="reproducir" value="Reproducir">-->
 		<input type="button" name="pausar" id="pausar" value="Pause">
-        <input type="button" name="siguiente" id="siguiente" value="Next Cicle">
+        <input autocomplete="off" disabled type="button" name="siguiente" id="siguiente" value="Next Cicle">
         <input type="button" name="reiniciar" id="reiniciar" value="Restart Matrix">
+       <p>stabilized?: <span id="valor_estabilizado"></span></p>
+       <p>living cells: <span id="celulas_vivas"></span></p>
 	</div>
 </body>
 </html>
